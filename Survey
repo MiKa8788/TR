@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TasteRover</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+  body{
+    margin:0;
+    background:#1A3A2A;
+    color:#F6F1E4;
+    font-family:'Poppins',Arial,sans-serif;
+}
+  .stage{
+    width:100%;
+    max-width:100%;
+    margin:0;
+    padding:20px;
+    box-sizing:border-box;
+    background:#1A3A2A;
+}
+  .screen { display:none; 
+    background:#1A3A2A;
+    padding-bottom:40px; }
+  .screen.active { display:block;
+    background:#1A3A2A; }
+  .progress { display:none; margin-bottom:36px; padding-top:18px; }
+  .progress.show { display:block; }
+  .road { position:relative; height:4px; background:rgba(184,150,46,0.25); border-radius:2px; margin:0 20px; }
+  .road::before,.road::after { content:''; position:absolute; top:-3px; width:10px; height:10px; border-radius:50%; background:rgba(184,150,46,0.4); }
+  .road::before { left:-18px; }
+  .road::after { right:-18px; }
+  .van { position:absolute; top:-16px; left:0; width:36px; height:22px; background:#2E5C40; border:1.5px solid #B8962E; border-radius:5px 8px 5px 5px; transform:translateX(-50%); transition:left 0.7s cubic-bezier(.4,0,.2,1); display:flex; align-items:center; justify-content:center; }
+  .van::before { content:''; position:absolute; bottom:-5px; left:4px; width:7px; height:7px; background:#102218; border:1px solid #B8962E; border-radius:50%; }
+  .van::after { content:''; position:absolute; bottom:-5px; right:4px; width:7px; height:7px; background:#102218; border:1px solid #B8962E; border-radius:50%; }
+  .van-logo { font-size:9px; font-weight:700; letter-spacing:0.5px; color:#D9BE6E; }
+  .van.pos-1 { left:0%; }
+  .van.pos-2 { left:33%; }
+  .van.pos-3 { left:66%; }
+  .van.pos-4 { left:100%; }
+  #welcome { text-align:center; }
+  #welcome .brass-label { font-size:16px; letter-spacing:4px; margin-bottom:24px; }
+  #welcome h1 {font-size:clamp(3rem,10vw,4rem);
+line-height:1.1; margin-bottom:24px; }
+  #welcome p { font-size:22px; line-height:1.5; }
+  h1,h2{
+    color:#fff;
+    font-weight:700;
+    margin:0 0 20px;
+    font-size:2rem;
+}
+  p { color:#D8DED8; line-height:1.6; margin:0 0 20px 0; }
+  .brass-label { color:#D9BE6E; font-size:12px; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
+  .option { display:block; width:100%; text-align:left; background:rgba(246,241,228,0.06); border:1px solid #B8962E; color:#FFFFFF; font-size:20px; font-family:'Poppins',Arial,sans-serif; padding:18px 20px; border-radius:12px; cursor:pointer; margin-bottom:12px; box-sizing:border-box; }
+  .option:hover { background:rgba(184,150,46,0.15); }
+  .option.selected { background:#B8962E; color:#102218; font-weight:700; }
+  .btn-primary { display:block; width:100%; background:#B8962E; color:#102218; font-weight:700; text-align:center; border:none; border-radius:12px; font-family:'Poppins',Arial,sans-serif; font-size:16px; padding:18px 20px; cursor:pointer; margin-top:20px; box-sizing:border-box; }
+  .btn-primary:hover { background:#D9BE6E; }
+  .btn-primary:disabled { opacity:0.35; cursor:not-allowed; }
+  input[type=text],textarea { width:100%; background:rgba(246,241,228,0.06); border:1px solid #B8962E; border-radius:4px; color:#FFFFFF; font-size:15px; font-family:'Poppins',Arial,sans-serif; padding:13px 15px; margin-bottom:10px; box-sizing:border-box; }
+  textarea { min-height:78px; resize:vertical; }
+  label { display:block; color:#D9BE6E; font-size:12px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; margin-top:14px; }
+  .hint { font-size:11px; color:#8A9E92; margin:-4px 0 10px 0; }
+  .flash { display:none; position:fixed; inset:0; background:#102218; align-items:center; justify-content:center; flex-direction:column; text-align:center; z-index:999; }
+  .flash.show { display:flex; }
+  .flash-emoji { font-size:52px; margin-bottom:12px; }
+  .flash-title { font-size:32px; font-weight:700; color:#FFFFFF; margin-bottom:8px; }
+  .flash-sub { color:#D9BE6E; text-transform:uppercase; letter-spacing:2px; font-size:12px; }
+  .sending-msg { font-size:13px; color:#8A9E92; text-align:center; margin-top:10px; }
+  .error-msg { font-size:13px; color:#E05050; text-align:center; margin-top:10px; display:none; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div id="welcome" class="screen active">
+    <div class="brass-label">TasteRover</div>
+    <h1>Welcome.</h1>
+    <p>Many thanks for your interest — and a warm hello from all of us at TasteRover.</p>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="road">
+      <div class="van" id="van"><span class="van-logo">TR</span></div>
+    </div>
+  </div>
+
+  <div id="step1" class="screen">
+    <h2>How do I feel about food?</h2>
+    <button class="option" onclick="chooseFood('Love it')">Love it</button>
+    <button class="option" onclick="chooseFood('Like it')">Like it</button>
+    <button class="option" onclick="chooseFood('meh')">It's alright</button>
+  </div>
+
+  <div id="exitMeh" class="screen">
+    <div class="brass-label">Bite by Byte</div>
+    <h2>Thanks so much for your time.</h2>
+    <p>At TasteRover, a little enthusiasm for food goes a long way. We appreciate you stopping by — and wish you all the best.</p>
+  </div>
+
+  <div id="step2" class="screen">
+    <h2>Cheesecake — which one?</h2>
+    <button class="option" id="ny-btn" onclick="pickCheesecake('New York')">New York</button>
+    <button class="option" id="basque-btn" onclick="pickCheesecake('Basque')">Basque</button>
+    <label>Why? (a few words is fine)</label>
+    <textarea id="cheesecakeWhy" oninput="validateStep2()" placeholder="Because..."></textarea>
+    <button class="btn-primary" id="step2Btn" disabled onclick="finishStep2()">Continue</button>
+  </div>
+
+  <div id="step3" class="screen">
+    <h2>We've all been there.</h2>
+    <p>Restaurants. Fast food. Street food. Give me up to three observations — something that could be done considerably better.</p>
+    <label>Observation one</label>
+    <textarea id="obs1" oninput="validateStep3()" placeholder="Something that could be better..."></textarea>
+    <div class="hint" id="obs-hint">At least one word to continue</div>
+    <label>Observation two <span style="opacity:0.45;text-transform:none;letter-spacing:0;font-size:11px;">(optional)</span></label>
+    <textarea id="obs2" placeholder="Something that could be better..."></textarea>
+    <label>Observation three <span style="opacity:0.45;text-transform:none;letter-spacing:0;font-size:11px;">(optional)</span></label>
+    <textarea id="obs3" placeholder="Something that could be better..."></textarea>
+    <button class="btn-primary" id="step3Btn" disabled onclick="finishStep3()">Continue</button>
+  </div>
+
+  <div id="step4" class="screen">
+    <h2>Shape the future.</h2>
+    <p>Think outside the bun. Break the rules. If you want in — drop your details and we'll find you.*</p>
+    <label>What do we call you?</label>
+    <input type="text" id="name" oninput="validateStep4()" placeholder="One character is fine">
+    <div class="hint">Just something we can call you by</div>
+    <label>Email or phone</label>
+    <input type="text" id="contact" oninput="validateStep4()" placeholder="you@example.com or +44...">
+    <button class="btn-primary" id="step4Btn" disabled onclick="submitForm()">Let's go</button>
+    <div class="sending-msg" id="sendingMsg" style="display:none;">Sending... ⏳</div>
+    <div class="error-msg" id="errorMsg">Something went wrong — please try again.</div>
+    <p style="font-size:11px;color:#5A7060;margin-top:16px;">*be nice</p>
+  </div>
+
+  <div id="thanks" class="screen" style="text-align:center;">
+    <div class="brass-label">Bite by Byte</div>
+    <h2 style="margin-top:12px;">We'll be in touch. 🍴</h2>
+    <p style="margin-top:16px;font-size:15px;font-style:italic;color:#D9BE6E;line-height:1.8;">"Learn the rules like a pro,<br>so you can break them like an artist."</p>
+    <p style="font-size:12px;color:#8A9E92;margin-top:4px;">— Pablo Picasso</p>
+    <p style="margin-top:32px;font-size:13px;letter-spacing:3px;color:#D9BE6E;font-style:italic;">Sapor Est Sacer</p>
+  </div>
+
+</div>
+
+<div class="flash" id="flash">
+  <div class="flash-emoji" id="flashEmoji">🍋</div>
+  <div class="flash-title" id="flashTitle">Juicy!</div>
+  <div class="flash-sub" id="flashSub">Step 1 — done</div>
+</div>
+
+<script>
+  var FORMSPREE='https://formspree.io/f/xlgkarje';
+  var stepPositions={step1:1,step2:2,step3:3,step4:4};
+  var answers={food:'',cheesecake:'',cheesecakeWhy:'',obs1:'',obs2:'',obs3:'',name:'',contact:''};
+
+  function show(id){
+    var all=document.querySelectorAll('.screen');
+    for(var i=0;i<all.length;i++) all[i].classList.remove('active');
+    document.getElementById(id).classList.add('active');
+    var prog=document.getElementById('progress');
+    if(stepPositions[id]){
+      prog.classList.add('show');
+      document.getElementById('van').className='van pos-'+stepPositions[id];
+    } else { prog.classList.remove('show'); }
+  }
+
+  function flashThen(emoji,title,sub,nextId){
+    document.getElementById('flashEmoji').textContent=emoji;
+    document.getElementById('flashTitle').textContent=title;
+    document.getElementById('flashSub').textContent=sub;
+    var f=document.getElementById('flash');
+    f.classList.add('show');
+    setTimeout(function(){ f.classList.remove('show'); show(nextId); },1300);
+  }
+
+  function chooseFood(choice){
+    if(choice==='meh'){show('exitMeh');return;}
+    answers.food=choice;
+    if(choice==='Love it') flashThen('🍋','Juicy!','Step 1 — done','step2');
+    else flashThen('🍕','Tasty!','Step 1 — done','step2');
+  }
+
+  var cheesecakePick='';
+  function pickCheesecake(choice){
+    cheesecakePick=choice; answers.cheesecake=choice;
+    document.getElementById('ny-btn').classList.toggle('selected',choice==='New York');
+    document.getElementById('basque-btn').classList.toggle('selected',choice==='Basque');
+    validateStep2();
+  }
+  function validateStep2(){
+    var why=document.getElementById('cheesecakeWhy').value;
+    document.getElementById('step2Btn').disabled=!(cheesecakePick&&why.trim().length>0);
+  }
+  function finishStep2(){
+    answers.cheesecakeWhy=document.getElementById('cheesecakeWhy').value;
+    flashThen('🍰','Delicious!','Step 2 — done','step3');
+  }
+
+  function validateStep3(){
+    var obs1=document.getElementById('obs1').value.trim();
+    var ok=obs1.length>=1;
+    document.getElementById('step3Btn').disabled=!ok;
+    document.getElementById('obs-hint').textContent=ok?'':'At least one word to continue';
+  }
+  document.getElementById('obs1').addEventListener('blur',function(){
+    if(this.value.trim().length<3){this.value='';validateStep3();}
+  });
+  function finishStep3(){
+    answers.obs1=document.getElementById('obs1').value;
+    answers.obs2=document.getElementById('obs2').value;
+    answers.obs3=document.getElementById('obs3').value;
+    flashThen('🔥','Sizzling!','Step 3 — done','step4');
+  }
+
+  function validateStep4(){
+    var n=document.getElementById('name').value.trim();
+    var c=document.getElementById('contact').value.trim();
+    document.getElementById('step4Btn').disabled=!(n.length>=1&&c.length>=1);
+  }
+
+  function submitForm(){
+    answers.name=document.getElementById('name').value.trim();
+    answers.contact=document.getElementById('contact').value.trim();
+    document.getElementById('step4Btn').disabled=true;
+    document.getElementById('sendingMsg').style.display='block';
+    document.getElementById('errorMsg').style.display='none';
+    fetch(FORMSPREE,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        'Name':answers.name,'Contact':answers.contact,
+        'Food feeling':answers.food,'Cheesecake pick':answers.cheesecake,
+        'Cheesecake why':answers.cheesecakeWhy,
+        'Observation 1':answers.obs1,'Observation 2':answers.obs2,'Observation 3':answers.obs3
+      })
+    })
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.ok){ flashThen('🙌','Thank you!',"We'll be in touch",'thanks'); }
+      else{
+        document.getElementById('sendingMsg').style.display='none';
+        document.getElementById('errorMsg').style.display='block';
+        document.getElementById('step4Btn').disabled=false;
+      }
+    })
+    .catch(function(){
+      document.getElementById('sendingMsg').style.display='none';
+      document.getElementById('errorMsg').style.display='block';
+      document.getElementById('step4Btn').disabled=false;
+    });
+  }
+
+  setTimeout(function(){show('step1');},3000);
+</script>
+</body>
+</html>
