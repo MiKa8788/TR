@@ -206,9 +206,12 @@
     document.getElementById('step4Btn').disabled=true;
     document.getElementById('sendingMsg').style.display='block';
     document.getElementById('errorMsg').style.display='none';
-    fetch("YOUR_APPS_SCRIPT_EXEC_URL",{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
+    fetch("https://script.google.com/macros/s/AKfycbzHOtiGObmIGnSlJ4Zxgfl54iG6nzGUWiR7g4dZR3dt2_EuvMPZZyIirN4jrSgloeM0/exec",{
+  method:"POST",
+  redirect:"follow",
+  headers:{
+    "Content-Type":"text/plain;charset=utf-8"
+  },
       body:JSON.stringify({
         'Name':answers.name,'Contact':answers.contact,
         'Food feeling':answers.food,'Cheesecake pick':answers.cheesecake,
