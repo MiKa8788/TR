@@ -201,49 +201,56 @@
   }
 
   function submitForm(){
-    answers.name=document.getElementById('name').value.trim();
-    answers.contact=document.getElementById('contact').value.trim();
-    document.getElementById('step4Btn').disabled=true;
-    document.getElementById('sendingMsg').style.display='block';
-    document.getElementById('errorMsg').style.display='none';
-    fetch("https://script.google.com/macros/s/AKfycbzHOtiGObmIGnSlJ4Zxgfl54iG6nzGUWiR7g4dZR3dt2_EuvMPZZyIirN4jrSgloeM0/exec",{
-  method:"POST",
-  redirect:"follow",
-  headers:{
-    "Content-Type":"text/plain;charset=utf-8"
-  },
-     body: JSON.stringify({
-  food: answers.food,
-  cheesecake: answers.cheesecake,
-  cheesecakeWhy: answers.cheesecakeWhy,
-  obs1: answers.obs1,
-  obs2: answers.obs2,
-  obs3: answers.obs3,
-  name: answers.name,
-  contact: answers.contact
-})
-       body:JSON.stringify({
-        'Name':answers.name,'Contact':answers.contact,
-        'Food feeling':answers.food,'Cheesecake pick':answers.cheesecake,
-        'Cheesecake why':answers.cheesecakeWhy,
-        'Observation 1':answers.obs1,'Observation 2':answers.obs2,'Observation 3':answers.obs3
-      })
+
+  answers.name = document.getElementById('name').value.trim();
+  answers.contact = document.getElementById('contact').value.trim();
+
+  document.getElementById('step4Btn').disabled = true;
+  document.getElementById('sendingMsg').style.display = 'block';
+  document.getElementById('errorMsg').style.display = 'none';
+
+  fetch("https://script.google.com/macros/s/AKfycbzHOtiGObmIGnSlJ4Zxgfl54iG6nzGUWiR7g4dZR3dt2_EuvMPZZyIirN4jrSgloeM0/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+      food: answers.food,
+      cheesecake: answers.cheesecake,
+      cheesecakeWhy: answers.cheesecakeWhy,
+      obs1: answers.obs1,
+      obs2: answers.obs2,
+      obs3: answers.obs3,
+      name: answers.name,
+      contact: answers.contact
     })
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data.success{ flashThen('🙌','Thank you!',"We'll be in touch",'thanks'); }
-      else{
-        document.getElementById('sendingMsg').style.display='none';
-        document.getElementById('errorMsg').style.display='block';
-        document.getElementById('step4Btn').disabled=false;
-      }
-    })
-    .catch(function(){
-      document.getElementById('sendingMsg').style.display='none';
+  })
+  .then(function(r){
+    return r.json();
+  })
+  .then(function(data){
+
+    document.getElementById('sendingMsg').style.display='none';
+
+    if(data.success){
+      flashThen('🙌','Thank you!',"We'll be in touch",'thanks');
+    }else{
       document.getElementById('errorMsg').style.display='block';
       document.getElementById('step4Btn').disabled=false;
-    });
-  }
+    }
+
+  })
+  .catch(function(err){
+
+    console.error(err);
+
+    document.getElementById('sendingMsg').style.display='none';
+    document.getElementById('errorMsg').style.display='block';
+    document.getElementById('step4Btn').disabled=false;
+
+  });
+
+}
 
   setTimeout(function(){show('step1');},5000);
 </script>
