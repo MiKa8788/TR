@@ -212,7 +212,17 @@
   headers:{
     "Content-Type":"text/plain;charset=utf-8"
   },
-      body:JSON.stringify({
+     body: JSON.stringify({
+  food: answers.food,
+  cheesecake: answers.cheesecake,
+  cheesecakeWhy: answers.cheesecakeWhy,
+  obs1: answers.obs1,
+  obs2: answers.obs2,
+  obs3: answers.obs3,
+  name: answers.name,
+  contact: answers.contact
+})
+       body:JSON.stringify({
         'Name':answers.name,'Contact':answers.contact,
         'Food feeling':answers.food,'Cheesecake pick':answers.cheesecake,
         'Cheesecake why':answers.cheesecakeWhy,
@@ -221,7 +231,7 @@
     })
     .then(function(r){return r.json();})
     .then(function(data){
-      if(data.ok){ flashThen('🙌','Thank you!',"We'll be in touch",'thanks'); }
+      if(data.success{ flashThen('🙌','Thank you!',"We'll be in touch",'thanks'); }
       else{
         document.getElementById('sendingMsg').style.display='none';
         document.getElementById('errorMsg').style.display='block';
