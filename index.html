@@ -6,25 +6,10 @@
 <title>TasteRover</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-  body{
-    margin:0;
-    background:#1A3A2A;
-    color:#F6F1E4;
-    font-family:'Poppins',Arial,sans-serif;
-}
-  .stage{
-    width:100%;
-    max-width:100%;
-    margin:0;
-    padding:20px;
-    box-sizing:border-box;
-    background:#1A3A2A;
-}
-  .screen { display:none; 
-    background:#1A3A2A;
-    padding-bottom:40px; }
-  .screen.active { display:block;
-    background:#1A3A2A; }
+  body { margin:0; background:#1A3A2A; color:#F6F1E4; font-family:'Poppins',Arial,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; }
+  .stage { width:100%; max-width:480px; min-height:100vh; box-sizing:border-box; padding:32px 28px; display:flex; flex-direction:column; justify-content:center; background:#1A3A2A; }
+  .screen { display:none; background:#1A3A2A; }
+  .screen.active { display:block; background:#1A3A2A; }
   .progress { display:none; margin-bottom:36px; padding-top:18px; }
   .progress.show { display:block; }
   .road { position:relative; height:4px; background:rgba(184,150,46,0.25); border-radius:2px; margin:0 20px; }
@@ -41,21 +26,15 @@
   .van.pos-4 { left:100%; }
   #welcome { text-align:center; }
   #welcome .brass-label { font-size:16px; letter-spacing:4px; margin-bottom:24px; }
-  #welcome h1 {font-size:clamp(3rem,10vw,4rem);
-line-height:1.1; margin-bottom:24px; }
+  #welcome h1 { font-size:56px; line-height:1.1; margin-bottom:24px; }
   #welcome p { font-size:22px; line-height:1.5; }
-  h1,h2{
-    color:#fff;
-    font-weight:700;
-    margin:0 0 20px;
-    font-size:2rem;
-}
+  h1,h2 { color:#FFFFFF; font-weight:700; margin:0 0 16px 0; }
   p { color:#D8DED8; line-height:1.6; margin:0 0 20px 0; }
   .brass-label { color:#D9BE6E; font-size:12px; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
-  .option { display:block; width:100%; text-align:left; background:rgba(246,241,228,0.06); border:1px solid #B8962E; color:#FFFFFF; font-size:20px; font-family:'Poppins',Arial,sans-serif; padding:18px 20px; border-radius:12px; cursor:pointer; margin-bottom:12px; box-sizing:border-box; }
+  .option { display:block; width:100%; text-align:left; background:rgba(246,241,228,0.06); border:1px solid #B8962E; color:#FFFFFF; font-size:17px; font-family:'Poppins',Arial,sans-serif; padding:18px 20px; border-radius:4px; cursor:pointer; margin-bottom:12px; box-sizing:border-box; }
   .option:hover { background:rgba(184,150,46,0.15); }
   .option.selected { background:#B8962E; color:#102218; font-weight:700; }
-  .btn-primary { display:block; width:100%; background:#B8962E; color:#102218; font-weight:700; text-align:center; border:none; border-radius:12px; font-family:'Poppins',Arial,sans-serif; font-size:16px; padding:18px 20px; cursor:pointer; margin-top:20px; box-sizing:border-box; }
+  .btn-primary { display:block; width:100%; background:#B8962E; color:#102218; font-weight:700; text-align:center; border:none; border-radius:4px; font-family:'Poppins',Arial,sans-serif; font-size:16px; padding:18px 20px; cursor:pointer; margin-top:10px; box-sizing:border-box; }
   .btn-primary:hover { background:#D9BE6E; }
   .btn-primary:disabled { opacity:0.35; cursor:not-allowed; }
   input[type=text],textarea { width:100%; background:rgba(246,241,228,0.06); border:1px solid #B8962E; border-radius:4px; color:#FFFFFF; font-size:15px; font-family:'Poppins',Arial,sans-serif; padding:13px 15px; margin-bottom:10px; box-sizing:border-box; }
@@ -227,7 +206,7 @@ line-height:1.1; margin-bottom:24px; }
     document.getElementById('step4Btn').disabled=true;
     document.getElementById('sendingMsg').style.display='block';
     document.getElementById('errorMsg').style.display='none';
-    fetch(FORMSPREE,{
+    fetch("YOUR_APPS_SCRIPT_EXEC_URL",{
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json'},
       body:JSON.stringify({
@@ -253,7 +232,7 @@ line-height:1.1; margin-bottom:24px; }
     });
   }
 
-  setTimeout(function(){show('step1');},3000);
+  setTimeout(function(){show('step1');},5000);
 </script>
 </body>
 </html>
